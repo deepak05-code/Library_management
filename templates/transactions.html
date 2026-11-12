@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white py-3"><h5 class="mb-0">Issue & Return History</h5></div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tx ID</th>
+                        <th>Book Title</th>
+                        <th>Customer</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td>#{{ tx.id }}</td>
+                        <td class="fw-semibold">{{ tx.book_title }}</td>
+                        <td>{{ tx.customer_name }} <small class="text-muted d-block">{{ tx.phone }}</small></td>
+                        <td>{{ tx.issue_date }}</td>
+                        <td>{{ tx.due_date }}</td>
+                        <td>
+                            {% if tx.return_date %}
+                                <span class="badge bg-secondary">{{ tx.return_date }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Active Loan</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if not tx.return_date %}
+                                <form action="{{ url_for('return_book', tx_id=tx.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Mark Returned</button>
+                                </form>
+                            {% else %}
+                                <span class="text-muted small">Completed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">No transactions recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

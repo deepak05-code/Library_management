@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0">Book Catalog</h5>
+        <form class="d-flex" method="GET" action="{{ url_for('index') }}">
+            <input class="form-control form-control-sm me-2" type="search" name="q" value="{{ query }}" placeholder="Search title, author, ISBN...">
+            <button class="btn btn-outline-secondary btn-sm" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>ISBN</th>
+                        <th>Status / Borrower</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.id }}</td>
+                        <td class="fw-semibold">{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td><code>{{ book.isbn }}</code></td>
+                        <td>
+                            {% if book.status == 'Available' %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Issued</span>
+                                <small class="text-muted d-block">To: {{ book.borrower_name }} (Due: {{ book.due_date }})</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if book.status == 'Available' %}
+                                <a href="{{ url_for('issue_book', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">Issue</a>
+                            {% else %}
+                                <form action="{{ url_for('return_book', tx_id=book.active_tx_id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Return</button>
+                                </form>
+                            {% endif %}
+                            <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">No books found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

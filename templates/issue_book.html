@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0">Issue Book</h5></div>
+            <div class="card-body">
+                <div class="alert alert-light border mb-3">
+                    <strong>Book:</strong> {{ book.title }} <br>
+                    <small class="text-muted">Author: {{ book.author }} | ISBN: {{ book.isbn }}</small>
+                </div>
+                {% if customers %}
+                <form method="POST" action="{{ url_for('issue_book', book_id=book.id) }}">
+                    <div class="mb-3">
+                        <label class="form-label">Select Customer</label>
+                        <select name="customer_id" class="form-select" required>
+                            <option value="" disabled selected>-- Choose a registered customer --</option>
+                            {% for c in customers %}
+                                <option value="{{ c.id }}">{{ c.name }} ({{ c.phone }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Loan Duration (Days)</label>
+                        <input type="number" name="days" class="form-control" value="14" min="1" max="90" required>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Confirm Issue</button>
+                    </div>
+                </form>
+                {% else %}
+                <p class="text-muted">No customers registered yet. Please register a customer first.</p>
+                <a href="{{ url_for('add_customer') }}" class="btn btn-primary">+ Register Customer</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
