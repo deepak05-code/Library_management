@@ -11,7 +11,7 @@ A practice repository created to test Git and GitHub workflows (`init`, `commit`
 - ## Quick Run
 
 ```bash
-git clone [https://github.com/deepakmahi655-creator/Library_management.git](https://github.com/deepakmahi655-creator/Library_management.git)
+git clone [https://github.com/deepak05-code/Library_management.git](https://github.com/deepak05-code/Library_management.git)
 cd Library_management
 pip install flask
 python app.py
