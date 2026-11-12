@@ -146,6 +146,26 @@ def add_customer():
             flash("A customer with this email already exists.", "warning")
     return render_template("add_customer.html")
 
+@app.route("/customers/edit/<int:customer_id>", methods=["GET", "POST"])
+def edit_customer(customer_id):
+    conn = get_db()
+    customer = conn.execute("SELECT * FROM customers WHERE id = ?", (customer_id,)).fetchone()
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        try:
+            conn.execute("UPDATE customers SET name = ?, email = ?, phone = ? WHERE id = ?", (name, email, phone, customer_id))
+            conn.commit()
+            flash("Customer details updated!", "success")
+            return redirect(url_for("customers"))
+        except sqlite3.IntegrityError:
+            flash("Another customer already uses that email.", "warning")
+        finally:
+            conn.close()
+    conn.close()
+    return render_template("edit_customer.html", customer=customer)
+
 @app.route("/customers/delete/<int:customer_id>", methods=["POST"])
 def delete_customer(customer_id):
     conn = get_db()
